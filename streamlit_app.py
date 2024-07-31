@@ -28,7 +28,7 @@ for message in st.session_state.messages:
 
 # Proxy function
 async def proxy_request(messages):
-    url = "https://api.amigochat.io/v1/chat/completions"
+    url = st.secrets["url"]
     headers = {
         'x-device-platform': 'android',
         'x-device-version': '9',
