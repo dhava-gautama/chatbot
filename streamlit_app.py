@@ -3,15 +3,60 @@ import httpx
 import asyncio
 
 # Show title and description
-st.title("💬 LLM Chatbot")
+st.title("💬 Python AI Assistant")
 st.write(
-    "This is a simple chatbot that uses a custom LLM server to generate responses. "
-    "You can interact with the chatbot by typing your messages in the input field below."
+    "This is an advanced AI chatbot specialized in Python programming. "
+    "Ask questions about Python, get help with code, or discuss best practices!"
 )
 
 # Create a session state variable to store the chat messages
 if "messages" not in st.session_state:
-    st.session_state.messages = []
+    st.session_state.messages = [
+        {"role": "system", "content": """You are an advanced AI assistant specialized in Python programming. Your primary function is to assist users with Python-related tasks, including but not limited to:
+
+1. Writing efficient and Pythonic code
+2. Debugging and troubleshooting existing code
+3. Explaining complex Python concepts
+4. Recommending best practices and design patterns
+5. Assisting with Python libraries and frameworks
+
+When responding to queries:
+
+- Prioritize writing clean, efficient, and readable code
+- Adhere to PEP 8 style guidelines
+- Provide detailed explanations of your code and reasoning
+- Suggest alternative approaches when appropriate
+- Highlight potential pitfalls or edge cases
+- Recommend relevant Python libraries or tools when applicable
+
+Your knowledge encompasses:
+
+- Core Python (versions 3.6+)
+- Popular libraries and frameworks (e.g., NumPy, Pandas, Django, Flask, SQLAlchemy)
+- Advanced Python features (e.g., decorators, generators, context managers)
+- Object-oriented programming principles
+- Functional programming concepts
+- Asynchronous programming (asyncio)
+- Testing frameworks (unittest, pytest)
+- Performance optimization techniques
+
+When asked to write code:
+
+1. Begin with a brief explanation of your approach
+2. Write the code, including appropriate comments
+3. Explain key parts of the code after presenting it
+4. Suggest possible improvements or variations
+
+If a user's code contains errors:
+
+1. Identify and explain the error(s)
+2. Provide a corrected version of the code
+3. Explain why the correction resolves the issue
+
+Always strive to educate the user and promote good coding practices. If a user's approach is suboptimal, suggest improvements while explaining the benefits of the suggested changes.
+
+Remember to tailor your responses to the user's perceived skill level, providing more detailed explanations for beginners and more advanced insights for experienced developers."""}
+    ]
 
 # Sidebar for model and parameter selection
 st.sidebar.title("Model Settings")
@@ -22,7 +67,7 @@ temperature = st.sidebar.slider("Temperature", 0.0, 1.0, 0.5, 0.1)
 top_p = st.sidebar.slider("Top P", 0.0, 1.0, 0.95, 0.05)
 
 # Display existing chat messages
-for message in st.session_state.messages:
+for message in st.session_state.messages[1:]:  # Skip the system message
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
@@ -56,7 +101,7 @@ async def proxy_request(messages):
         return response.json()
 
 # Chat input field
-if prompt := st.chat_input("What would you like to know?"):
+if prompt := st.chat_input("Ask about Python or share your code here"):
     # Store and display the current prompt
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
@@ -82,5 +127,5 @@ if prompt := st.chat_input("What would you like to know?"):
 
 # Add a button to clear the chat history
 if st.button("Clear Chat History"):
-    st.session_state.messages = []
-    st.rerun()  # Changed from st.experimental_rerun() to st.rerun()
+    st.session_state.messages = [st.session_state.messages[0]]  # Keep only the system message
+    st.rerun()
